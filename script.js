@@ -12,12 +12,23 @@ function grabPageElements()
   currentDayElement = document.getElementById("currentDay");
 }
 
+function uiSetTodaysDate()
+{
+  let now = moment();
+  let formattedToday = now.format("dddd, MMMM Do");
+  currentDayElement.innerText = formattedToday;
+}
+
 function browserMain()
 {
-  generateBtn = document.querySelector("#generate");
-  // Add event listener to generate button
-  generateBtn.addEventListener("click", writePassword);
+  grabPageElements();
+  uiSetTodaysDate();
 }
+
+///////////////////////////////////////////////////////
+// Straight non-Browser non-UI stuff goes below here //
+///////////////////////////////////////////////////////
+
 
 function isNode()
 {
