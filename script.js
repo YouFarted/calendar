@@ -57,10 +57,6 @@ function uiPopulateAllBusinessHours()
   let scheduleArray = loadLocalStorageSchedule();
   // I force variable "now" to be evenly on the hour for easy comparison
   let now = moment({minute:0}); 
-  /* TODO remove the following assignment.  It is after-hours while I write this 
-  so I won't get a variety of past/present/future unless I 
-  fake the time.  So I am.  I'll pretend it is noon.*/
-  now = moment({hour: 12, minute:0});//!!!!
   let formattedToday = now.format("dddd, MMMM Do");
 
   let schedule = loadLocalStorageSchedule();
