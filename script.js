@@ -15,7 +15,12 @@ function grabPageElements()
 
 function uiPopulateAllBusinessHours()
 {
-  let now = moment();
+  // I force now to be evenly on the hour for easy comparison
+  let now = moment({minute:0}); 
+  /* TODO remove the following assignment.  It is after-hours while I write this 
+  so I won't get a variety of past/present/future unless I 
+  fake the time.  So I am.  I'll pretend it is noon.*/
+  now = moment({hour: 12, minute:0});
   let formattedToday = now.format("dddd, MMMM Do");
 
   for(let i=0; i<=8;++i)
@@ -31,8 +36,20 @@ function uiPopulateAllBusinessHours()
     //   <textarea>Words</textarea>
     //   <button class="saveBtn"><i class="fa fa-save"> Save</i></button>
     // </div>
-    let pastPresentFuture = "future";
-    //let thisHour = i+8;
+    let pastPresentFuture = "";
+    
+    let isPast   = currentHourMoment.isBefore(now);
+    let isFuture = currentHourMoment.isAfter(now);
+    if(isPast) {
+      pastPresentFuture = "past";
+    } else if(isFuture) {
+      pastPresentFuture = "future";
+    } else {
+      pastPresentFuture = "present";
+    }
+
+    console.log(`hour ${hour} is in the ${pastPresentFuture}`);
+    console.log(`isPast = ${isPast}, isFuture = ${isFuture}`);
     let jTimeBlockDiv = $("<div>");
     jTimeBlockDiv.addClass("time-block").addClass("row").addClass(pastPresentFuture);
 
