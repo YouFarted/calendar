@@ -4,25 +4,55 @@
 // Browser UI stuff goes below here //
 //////////////////////////////////////
 
-
-var currentDayElement = null;
+var jCurrentDayElement          = null;
+var jTimeblockContainerElementj = null;
 
 function grabPageElements()
 {
-  currentDayElement = document.getElementById("currentDay");
+  jCurrentDayElement = $("#currentDay");
+  jTimeblockContainerElementj = $("#timeblock-container");
+}
+
+function uiPopulateAllBusinessHours()
+{
+  for(let i=0; i<8;++i)
+  {
+    // create the following programatically
+    // TODO: choose past/present/future correctly - for now HARDCODE
+    // <div class="time-block row future">
+    //   <div class="hour">-----The hour</div>
+    //   <textarea>Words</textarea>
+    //   <button class="saveBtn"><i class="fa fa-save"> Save</i></button>
+    // </div>
+    let pastPresentFuture = "future";
+    let thisHour = i+8;
+    let jTimeBlockDiv = $("<div>");
+    jTimeBlockDiv.addClass("time-block").addClass("row").addClass(pastPresentFuture);
+
+    console.log(`i = ${i}`)
+
+    let jHourDiv = $("<div>").addClass("hour").text(thisHour);
+    let jTextArea = $("<textarea>"); // later, i'll load saved
+    let jButton = $("<button>").addClass("saveBtn");
+    let jButtonItalicElement = $("<i>").addClass("fa").addClass("fa-save").text(" Save");
+    jButton.append(jButtonItalicElement);
+    jTimeBlockDiv.append(jHourDiv).append(jTextArea).append(jButton);
+    jTimeblockContainerElementj.append(jTimeBlockDiv);
+  }
 }
 
 function uiSetTodaysDate()
 {
   let now = moment();
   let formattedToday = now.format("dddd, MMMM Do");
-  currentDayElement.innerText = formattedToday;
+  jCurrentDayElement.text(formattedToday);
 }
 
 function browserMain()
 {
   grabPageElements();
   uiSetTodaysDate();
+  uiPopulateAllBusinessHours();
 }
 
 ///////////////////////////////////////////////////////

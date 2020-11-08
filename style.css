@@ -69,3 +69,19 @@ textarea{
   font-size: 20px;
   transition: all .3s ease-in-out;
 }
+
+/* adjust widths to distribute time and save buttons
+   to the sides and the textarea to take up the remaining
+   majority in the middle */
+
+.time-block > div {
+  width: 10%;
+}
+
+.time-block > textarea {
+  width: 80%;
+}
+
+.time-block > button {
+  width: 10%;
+}
