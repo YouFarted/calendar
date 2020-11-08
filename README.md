@@ -13,8 +13,8 @@ Provided an index.html/style.css which provide an outline of how a calendar is t
 ## Acceptance Criteria
 ```
 GIVEN I am using a daily planner to create a schedule
-x WHEN I open the planner
-x THEN the current day is displayed at the top of the calendar
+WHEN I open the planner
+THEN the current day is displayed at the top of the calendar
 WHEN I scroll down
 THEN I am presented with timeblocks for standard business hours
 WHEN I view the timeblocks for that day
@@ -28,7 +28,8 @@ THEN the saved events persist
 ```
 
 ## Changes
-
+I used a baseline script from an earlier project and then
+played with the provided html to figure out how to create the structure that i'll need to add dynamically.  Then I added code to create the time divs upon load.
 
 ## Live Project
 

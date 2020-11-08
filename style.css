@@ -85,3 +85,7 @@ textarea{
 .time-block > button {
   width: 10%;
 }
+
+body > button {
+  margin: 30px;
+}

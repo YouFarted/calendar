@@ -5,23 +5,65 @@
 //////////////////////////////////////
 
 var jCurrentDayElement          = null;
-var jTimeblockContainerElementj = null;
+var jTimeblockContainerElement = null;
+var jClearSavedButton           = null;
+var jClearUIButton              = null;
 
 function grabPageElements()
 {
   jCurrentDayElement = $("#currentDay");
-  jTimeblockContainerElementj = $("#timeblock-container");
+  jTimeblockContainerElement = $("#timeblock-container");
+  jClearSavedButton = $("#clear-saved-schedule-button");
+  jClearUIButton = $("#clear-ui-button");
+}
+
+function loadLocalStorageSchedule()
+{
+  let emptyDaySchedule = new Array(8);
+  let scheduleString = localStorage.getItem("schedule");
+  if( !scheduleString ){
+    return emptyDaySchedule;
+  }
+  else {
+    if(scheduleString[0] != "[")
+    {
+      return emptyDaySchedule;
+    }
+    let scheduleArray = JSON.parse(scheduleString);
+    if(typeof(scheduleArray) !== "object"){
+      return emptyDaySchedule;
+    }
+    return scheduleArray;
+  }
+}
+
+function saveLocalStorageSchedule(schedule)
+{
+  let str = JSON.stringify(schedule);
+  localStorage.setItem("schedule", str);
+}
+
+function saveTimeI(i, text)
+{
+  let scheduleArray = loadLocalStorageSchedule();
+
+  scheduleArray[i] = text;
+
+  saveLocalStorageSchedule(scheduleArray);
 }
 
 function uiPopulateAllBusinessHours()
 {
-  // I force now to be evenly on the hour for easy comparison
+  let scheduleArray = loadLocalStorageSchedule();
+  // I force variable "now" to be evenly on the hour for easy comparison
   let now = moment({minute:0}); 
   /* TODO remove the following assignment.  It is after-hours while I write this 
   so I won't get a variety of past/present/future unless I 
   fake the time.  So I am.  I'll pretend it is noon.*/
-  now = moment({hour: 12, minute:0});
+  now = moment({hour: 12, minute:0});//!!!!
   let formattedToday = now.format("dddd, MMMM Do");
+
+  let schedule = loadLocalStorageSchedule();
 
   for(let i=0; i<=8;++i)
   {
@@ -30,9 +72,8 @@ function uiPopulateAllBusinessHours()
     let formattedCurrentHour = currentHourMoment.format("hhA");
 
     // create the following programatically
-    // TODO: choose past/present/future correctly - for now HARDCODE
     // <div class="time-block row future">
-    //   <div class="hour">-----The hour</div>
+    //   <div class="hour">The hour</div>
     //   <textarea>Words</textarea>
     //   <button class="saveBtn"><i class="fa fa-save"> Save</i></button>
     // </div>
@@ -51,17 +92,21 @@ function uiPopulateAllBusinessHours()
     console.log(`hour ${hour} is in the ${pastPresentFuture}`);
     console.log(`isPast = ${isPast}, isFuture = ${isFuture}`);
     let jTimeBlockDiv = $("<div>");
-    jTimeBlockDiv.addClass("time-block").addClass("row").addClass(pastPresentFuture);
-
-    console.log(`i = ${i}`)
+    jTimeBlockDiv
+      .addClass("time-block")
+      .addClass("row")
+      .addClass(pastPresentFuture);
+    // save index as a data element for convienent retrieval 
+    // from a bubbled click using event.target
+    jTimeBlockDiv.data("index", i);
 
     let jHourDiv = $("<div>").addClass("hour").text(formattedCurrentHour);
-    let jTextArea = $("<textarea>"); // later, i'll load saved
+    let jTextArea = $("<textarea>").val(scheduleArray[i]);
     let jButton = $("<button>").addClass("saveBtn");
     let jButtonItalicElement = $("<i>").addClass("fa").addClass("fa-save").text(" Save");
     jButton.append(jButtonItalicElement);
     jTimeBlockDiv.append(jHourDiv).append(jTextArea).append(jButton);
-    jTimeblockContainerElementj.append(jTimeBlockDiv);
+    jTimeblockContainerElement.append(jTimeBlockDiv);
   }
 }
 
@@ -72,11 +117,45 @@ function uiSetTodaysDate()
   jCurrentDayElement.text(formattedToday);
 }
 
+function uiRegisterEvents()
+{
+  jTimeblockContainerElement.on("click", function(e){
+    let tgt = e.target;
+    let tgtTag = tgt.tagName;
+    let jTimeblockDiv = null;
+    // it can bubble through the italic element in which 
+    // case the target is one level deeper
+    // so I do .parent().parent() in the case of I element targets
+    if(tgtTag === "BUTTON") {
+      jTimeblockDiv = $(e.target).parent();
+    } else if(tgtTag === "I") {
+      let iParent = $(e.target).parent();
+      console.log(`iParent = ${iParent}`);
+      jTimeblockDiv = $(e.target).parent().parent();
+    } else return;
+
+    // jTimeblockDiv must be set here otherwise I would have returned already
+    let index = jTimeblockDiv.data("index");
+    let textareaText = jTimeblockDiv.find("textarea").val();
+    console.log(`save text "${textareaText}" to index ${index}`);
+    saveTimeI(index, textareaText);
+  });
+  jClearSavedButton.on("click", function(e){
+    localStorage.removeItem("schedule");
+    loadLocalStorageSchedule();
+  });
+  jClearUIButton.on("click", function(e){
+    localStorage.removeItem("schedule");
+    uiPopulateAllBusinessHours();
+  }); 
+}
+
 function browserMain()
 {
   grabPageElements();
   uiSetTodaysDate();
   uiPopulateAllBusinessHours();
+  uiRegisterEvents();
 }
 
 ///////////////////////////////////////////////////////
@@ -132,8 +211,6 @@ function tests()
   testDeepArrayEquals();
 }
 
-
-
 function testDeepArrayEquals()
 {
   assert(deepArrayEquals(1,1));
@@ -142,10 +219,3 @@ function testDeepArrayEquals()
   assert(deepArrayEquals([1,2,3,4,5],[1,2,3,4,5]));
   assert(!deepArrayEquals([1,2,3,4,5],[1,2,3,4,6]));
 }
-
-
-//////////////////////////////////////
-// Browser UI stuff goes below here //
-//////////////////////////////////////
-
-
