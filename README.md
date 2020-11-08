@@ -29,7 +29,11 @@ THEN the saved events persist
 
 ## Changes
 I used a baseline script from an earlier project and then
-played with the provided html to figure out how to create the structure that i'll need to add dynamically.  Then I added code to create the time divs upon load.
+played with the provided html to figure out how to create the structure that i'll need to add dynamically.  Then I added code to create the time divs upon load. Then I added
+load and store from and to localStorage and rigged up the save buttons to save while filling the textareas in the UI
+with the saved schedule items upon load.  I added a clear
+button for localstorage only and a clear that clears the
+localstorage and the UI.
 
 ## Live Project
 
