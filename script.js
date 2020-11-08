@@ -15,8 +15,15 @@ function grabPageElements()
 
 function uiPopulateAllBusinessHours()
 {
-  for(let i=0; i<8;++i)
+  let now = moment();
+  let formattedToday = now.format("dddd, MMMM Do");
+
+  for(let i=0; i<=8;++i)
   {
+    let hour = i + 9; // 8 hours starting at 9
+    let currentHourMoment = moment({hour: hour});
+    let formattedCurrentHour = currentHourMoment.format("hhA");
+
     // create the following programatically
     // TODO: choose past/present/future correctly - for now HARDCODE
     // <div class="time-block row future">
@@ -25,13 +32,13 @@ function uiPopulateAllBusinessHours()
     //   <button class="saveBtn"><i class="fa fa-save"> Save</i></button>
     // </div>
     let pastPresentFuture = "future";
-    let thisHour = i+8;
+    //let thisHour = i+8;
     let jTimeBlockDiv = $("<div>");
     jTimeBlockDiv.addClass("time-block").addClass("row").addClass(pastPresentFuture);
 
     console.log(`i = ${i}`)
 
-    let jHourDiv = $("<div>").addClass("hour").text(thisHour);
+    let jHourDiv = $("<div>").addClass("hour").text(formattedCurrentHour);
     let jTextArea = $("<textarea>"); // later, i'll load saved
     let jButton = $("<button>").addClass("saveBtn");
     let jButtonItalicElement = $("<i>").addClass("fa").addClass("fa-save").text(" Save");
